@@ -9,8 +9,11 @@
 */
 
 #include <sys/socket.h>
+#include <stdlib.h>
+
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
+#include <bluetooth/hci_lib.h>
 
 int main(void)
 {

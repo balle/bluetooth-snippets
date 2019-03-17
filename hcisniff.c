@@ -13,6 +13,8 @@
 #include <sys/types.h>
 #include <asm/types.h>
 #include <sys/socket.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
@@ -39,6 +41,23 @@ struct frame
   long	flags;
   struct timeval ts;
 };
+
+void hci_dump(struct frame *frm)
+{
+  __u8 type = *(__u8 *)frm->ptr; 
+  
+  frm->ptr++; frm->len--;
+  
+  if(type == HCI_ACLDATA_PKT)
+    {
+      hci_acl_hdr *hdr = (void *) frm->ptr;
+      __u16 handle = btohs(hdr->handle);
+      __u16 dlen = btohs(hdr->dlen);
+      __u8 flags = acl_flags(handle);
+      printf("ACL data: handle 0x%4.4x flags 0x%2.2x dlen %d\n",
+       acl_handle(handle), flags, dlen);
+    }
+}
 
 int main(void)
 {
@@ -151,21 +170,4 @@ int main(void)
 
   close(sock);
   return 0;
-}
-
-void hci_dump(struct frame *frm)
-{
-  __u8 type = *(__u8 *)frm->ptr; 
-  
-  frm->ptr++; frm->len--;
-  
-  if(type == HCI_ACLDATA_PKT)
-    {
-      hci_acl_hdr *hdr = (void *) frm->ptr;
-      __u16 handle = btohs(hdr->handle);
-      __u16 dlen = btohs(hdr->dlen);
-      __u8 flags = acl_flags(handle);
-      printf("ACL data: handle 0x%4.4x flags 0x%2.2x dlen %d\n",
-	     acl_handle(handle), flags, dlen);
-    }
 }

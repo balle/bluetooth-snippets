@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
                              break;
 
                         case 'c':
-                             l2_code = atoi( (char *)printf("%x", optarg) );
+                             l2_code = atoi(optarg);
                              break;
 
                         case 'i':

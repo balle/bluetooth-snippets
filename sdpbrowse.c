@@ -8,8 +8,12 @@
   Compile with gcc -lbluetooth -lsdp <executable> <source>
 */
 
+#include <stdlib.h>
+#include <unistd.h>
+
 #include <bluetooth/sdp.h>
 #include <bluetooth/sdp_lib.h>
+#include <bluetooth/hci_lib.h>
 
 int main(int argc, char *argv[])
 {
