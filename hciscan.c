@@ -18,8 +18,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 
-int main(void)
-{
+int main(void) {
   inquiry_info *info = NULL;
   bdaddr_t bdaddr;
   char name[248];
@@ -32,34 +31,29 @@ int main(void)
   printf("Scanning ...\n");
   num_rsp = hci_inquiry(dev_id, length, num_rsp, NULL, &info, flags);
 
-  if(num_rsp < 0) 
-    {
-      perror("Inquiry failed.");
-      exit(1);
+  if (num_rsp < 0) {
+    perror("Inquiry failed.");
+    exit(1);
+  }
+
+  if ((dd = hci_open_dev(dev_id)) < 0) {
+    perror("HCI device open failed");
+    free(info);
+    exit(1);
+  }
+
+  for (i = 0; i < num_rsp; i++) {
+    memset(name, 0, sizeof(name));
+
+    if (hci_read_remote_name(dd, &(info+i)->bdaddr, sizeof(name), name, 100000) < 0) {
+      strcpy(name, "n/a");
     }
 
-  if ((dd = hci_open_dev(dev_id)) < 0) 
-    {
-      perror("HCI device open failed");
-      free(info);
-      exit(1);
-    }
-  
-  for(i = 0; i < num_rsp; i++) 
-    {
-      memset(name, 0, sizeof(name));
-
-      if(hci_read_remote_name(dd, &(info+i)->bdaddr, sizeof(name), name, 100000) < 0)
-	{
-	  strcpy(name, "n/a");
-	}
-
-      baswap(&bdaddr, &(info+i)->bdaddr);
-      printf("\t%s\t%s\n", batostr(&bdaddr), name);
+    baswap(&bdaddr, &(info+i)->bdaddr);
+    printf("\t%s\t%s\n", batostr(&bdaddr), name);
   }
   
   close(dd);
   free(info);
   return 0;
 }
-

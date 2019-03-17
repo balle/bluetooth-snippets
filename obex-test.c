@@ -5,8 +5,7 @@
 #define BTADDR "00:01:E3:00:D3:63"
 #define CHANNEL 4
 
-int main(void)
-{
+int main(void) {
   obexftp_client_t *cli;
 
   cli = obexftp_cli_open (OBEX_TRANS_BLUETOOTH, ctrans, NULL);
